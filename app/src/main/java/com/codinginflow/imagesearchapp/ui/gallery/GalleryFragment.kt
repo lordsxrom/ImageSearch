@@ -14,6 +14,7 @@ import androidx.paging.LoadState
 import com.codinginflow.imagesearchapp.R
 import com.codinginflow.imagesearchapp.data.UnsplashPhoto
 import com.codinginflow.imagesearchapp.databinding.FragmentGalleryBinding
+import com.codinginflow.imagesearchapp.idling.CountingIdlingResourceSingleton
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -62,6 +63,10 @@ class GalleryFragment : Fragment(R.layout.fragment_gallery), UnsplashPhotoAdapte
                     textViewEmpty.isVisible = true
                 } else {
                     textViewEmpty.isVisible = false
+                }
+
+                if (loadState.source.refresh is LoadState.NotLoading) {
+                    CountingIdlingResourceSingleton.decrement()
                 }
             }
         }

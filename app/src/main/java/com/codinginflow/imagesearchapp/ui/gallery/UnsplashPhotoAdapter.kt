@@ -1,15 +1,21 @@
 package com.codinginflow.imagesearchapp.ui.gallery
 
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.codinginflow.imagesearchapp.R
 import com.codinginflow.imagesearchapp.data.UnsplashPhoto
 import com.codinginflow.imagesearchapp.databinding.ItemUnsplashPhotoBinding
+import com.codinginflow.imagesearchapp.idling.CountingIdlingResourceSingleton
 
 class UnsplashPhotoAdapter(private val listener: OnItemClickListener) :
     PagingDataAdapter<UnsplashPhoto, UnsplashPhotoAdapter.PhotoViewHolder>(PHOTO_COMPARATOR) {
@@ -46,8 +52,32 @@ class UnsplashPhotoAdapter(private val listener: OnItemClickListener) :
 
         fun bind(photo: UnsplashPhoto) {
             binding.apply {
+                CountingIdlingResourceSingleton.increment()
                 Glide.with(itemView)
                     .load(photo.urls.regular)
+                    .listener(object : RequestListener<Drawable> {
+                        override fun onLoadFailed(
+                            e: GlideException?,
+                            model: Any?,
+                            target: Target<Drawable>?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            CountingIdlingResourceSingleton.decrement()
+                            return false
+                        }
+
+                        override fun onResourceReady(
+                            resource: Drawable?,
+                            model: Any?,
+                            target: Target<Drawable>?,
+                            dataSource: DataSource?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            CountingIdlingResourceSingleton.decrement()
+                            return false
+                        }
+
+                    })
                     .centerCrop()
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .error(R.drawable.ic_error)

@@ -5,6 +5,7 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import androidx.paging.cachedIn
 import com.codinginflow.imagesearchapp.data.UnsplashRepository
+import com.codinginflow.imagesearchapp.idling.CountingIdlingResourceSingleton
 
 class GalleryViewModel @ViewModelInject constructor(
     private val repository: UnsplashRepository,
@@ -14,6 +15,7 @@ class GalleryViewModel @ViewModelInject constructor(
     private val currentQuery = state.getLiveData(CURRENT_QUERY, DEFAULT_QUERY)
 
     val photos = currentQuery.switchMap { queryString ->
+        CountingIdlingResourceSingleton.increment()
         repository.getSearchResults(queryString).cachedIn(viewModelScope)
     }
 

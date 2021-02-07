@@ -15,6 +15,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.codinginflow.imagesearchapp.R
 import com.codinginflow.imagesearchapp.databinding.FragmentDetailsBinding
+import com.codinginflow.imagesearchapp.idling.CountingIdlingResourceSingleton
 
 class DetailsFragment : Fragment(R.layout.fragment_details) {
 
@@ -28,6 +29,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         binding.apply {
             val photo = args.photo
 
+            CountingIdlingResourceSingleton.increment()
             Glide.with(this@DetailsFragment)
                 .load(photo.urls.full)
                 .error(R.drawable.ic_error)
@@ -39,6 +41,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
                         isFirstResource: Boolean
                     ): Boolean {
                         progressBar.isVisible = false
+                        CountingIdlingResourceSingleton.decrement()
                         return false
                     }
 
@@ -52,6 +55,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
                         progressBar.isVisible = false
                         textViewCreator.isVisible = true
                         textViewDescription.isVisible = photo.description != null
+                        CountingIdlingResourceSingleton.decrement()
                         return false
                     }
 
