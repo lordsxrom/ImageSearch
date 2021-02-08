@@ -16,7 +16,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "com.codinginflow.imagesearchapp.test.MyCucumberAndroidJUnitRunner"
 
         buildConfigField("String", "UNSPLASH_ACCESS_KEY", unsplash_access_key)
     }
@@ -80,6 +80,8 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-contrib:$espressoVersion"
     androidTestImplementation "androidx.test.espresso:espresso-intents:$espressoVersion"
     implementation "androidx.test.espresso:espresso-idling-resource:$espressoVersion"
+
+    androidTestImplementation "io.cucumber:cucumber-android:4.8.2"
 }
 
 kapt {
